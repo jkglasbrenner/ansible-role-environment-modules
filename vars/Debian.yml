@@ -1,0 +1,13 @@
+---
+modules_install_from_source_dependencies:
+  - autoconf
+  - automake
+  - autopoint
+  - bash
+  - build-essential
+  - coreutils
+  - dejagnu
+  - grep
+  - sed
+  - tcl-dev
+...

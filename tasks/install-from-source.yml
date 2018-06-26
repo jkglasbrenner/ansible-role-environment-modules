@@ -1,0 +1,93 @@
+---
+- name: Include OS-specific variables (Debian)
+  include_vars: "{{ ansible_os_family }}.yml"
+  when: ansible_os_family == "Debian"
+
+- name: Define modules_install_from_source_dependencies
+  set_fact:
+    modules_install_from_source_dependencies: "{{ __modules_install_from_source_dependencies | list }}"
+  when: modules_install_from_source_dependencies is not defined
+
+- name: Install dependencies needed for Environment Modules
+  become: true
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ modules_install_from_source_dependencies }}"
+  when: ansible_os_family == 'Debian'
+
+- name: Get installed version
+  shell: module --version
+  args:
+    executable: /bin/bash
+  warn: false
+  changed_when: false
+  failed_when: false
+  check_mode: false
+  register: modules_installed_version
+
+- name: Force Environment Modules install if the version numbers do not match
+  set_fact:
+    modules_reinstall_from_source: true
+  when:
+    - modules_install_from_source_force_update
+    - (modules_installed_version.rc == 0) and (modules_installed_version.stderr | regex_replace("^.*?([0-9\.]+).*?$", "\\1") is version_compare(modules_version, operator="!="))
+  changed_when: false
+  failed_when: false
+
+- name: Create local source directory for Environment Modules
+  file:
+    path: "{{ workspace }}/MODULES/"
+    state: directory
+
+- name: Download source for Environment Modules
+  get_url:
+    url: "https://github.com/cea-hpc/modules/releases/download/v{{ modules_version }}/modules-{{ modules_version }}.tar.gz"
+    sha256sum: "{{ modules_src_sha256 }}"
+    dest: "{{ workspace }}/MODULES/modules-{{ modules_version }}.tar.gz"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0644
+  when: (modules_installed_version.rc != 0) or modules_reinstall_from_source
+  changed_when: (modules_installed_version.rc != 0) or modules_reinstall_from_source
+
+- name: Unarchive the Environment Modules source code
+  unarchive:
+    src: "{{ workspace }}/MODULES/modules-{{ modules_version }}.tar.gz"
+    dest: "{{ workspace }}/MODULES/"
+    creates: "{{ workspace }}/MODULES/modules-{{ modules_version }}/README"
+    copy: false
+  register: modules_unarchive
+  failed_when:
+    - (modules_installed_version.rc != 0) or modules_reinstall_from_source
+    - (modules_unarchive.rc != 0)
+
+- name: Configure compilation settings for Modules
+  shell: ./configure --prefix={{ modules_install_path | quote }} --modulefilesdir={{ modules_modulefiles_path | quote }}
+  args:
+    chdir: "{{ workspace }}/MODULES/modules-{{ modules_version }}"
+    creates: "{{ workspace }}/MODULES/modules-{{ modules_version }}/site.exp"
+  register: modules_configure_source
+  failed_when:
+    - (modules_installed_version.rc != 0) or modules_reinstall_from_source
+    - (modules_configure_source.rc != 0)
+
+- name: Compile Modules
+  make:
+    chdir: "{{ workspace }}/MODULES/modules-{{ modules_version }}"
+    params:
+      MAKE: "{{ make_cmd }}"
+  when: (modules_installed_version.rc != 0) or modules_reinstall_from_source
+
+- name: Install Modules
+  become: true
+  make:
+    chdir: "{{ workspace }}/MODULES/modules-{{ modules_version }}"
+    target: install
+  register: modules_make_install
+  when:
+    - (modules_installed_version.rc != 0) or modules_reinstall_from_source
+  changed_when:
+    - (modules_installed_version.rc != 0) or modules_reinstall_from_source
+    - (modules_make_install.rc == 0)
+...

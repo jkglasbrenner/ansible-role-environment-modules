@@ -1,0 +1,14 @@
+---
+- name: Update apt cache
+  become: true
+  apt:
+    update_cache: true
+    cache_valid_time: 86400
+  when: ansible_os_family == 'Debian'
+
+- import_tasks: install-from-source.yml
+  when: modules_install_from_source == true
+
+- import_tasks: post-install.yml
+  when: modules_install_from_source == true
+...

@@ -1,0 +1,16 @@
+---
+dependencies: []
+
+galaxy_info:
+  author: jkglasbrenner
+  description: Environment modules for dynamic modification of a user's environment via modulefiles.
+  license: MIT
+  min_ansible_version: 2.5
+  platforms:
+    - name: Ubuntu
+      versions:
+        - 18.04
+  galaxy_tags:
+    - modules
+    - hpc
+...

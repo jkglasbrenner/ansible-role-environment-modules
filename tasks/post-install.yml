@@ -1,0 +1,55 @@
+---
+- name: Enable Modules initialization at shell startup (sh)
+  become: true
+  file:
+    src: "{{ modules_install_path }}/init/profile.sh"
+    dest: /etc/profile.d/modules.sh
+    state: link
+  when: (modules_installed_version.rc != 0) or modules_reinstall_from_source
+
+- name: Enable Modules initialization at shell startup (csh)
+  become: true
+  file:
+    src: "{{ modules_install_path }}/init/profile.csh"
+    dest: /etc/profile.d/modules.csh
+    state: link
+  when: (modules_installed_version.rc != 0) or modules_reinstall_from_source
+
+- name: Add line to /etc/bash.bashrc to source Modules
+  become: true
+  lineinfile:
+    path: /etc/bash.bashrc
+    state: present
+    insertafter: EOF
+    line: |
+      # Initialize Modules
+      . {{ modules_install_path }}/init/bash
+  when: (modules_installed_version.rc != 0) or modules_reinstall_from_source
+
+- name: Configure modulerc file
+  become: true
+  template:
+    src: modulerc.j2
+    dest: "{{ modules_install_path }}/init/modulerc"
+    mode: "0644"
+    owner: root
+    group: root
+  when: (modules_installed_version.rc != 0) or modules_reinstall_from_source
+
+- name: Configure use.own file
+  become: true
+  template:
+    src: use.own.j2
+    dest: "{{ modules_install_path }}/init/use.own"
+    mode: "0644"
+    owner: root
+    group: root
+
+- name: Remove example modulefiles
+  become: true
+  file:
+    path: "{{ modules_install_path }}/modulefiles/{{ item }}"
+    state: absent
+  with_items:
+    "{{ modules_example_modulefiles_to_remove }}"
+...
