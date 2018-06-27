@@ -1,7 +1,7 @@
-# Role Name
+# Ansible Role: Environment Modules
 
-Builds [environment modules](http://modules.sourceforge.net/) from source  on Ubuntu 18.04 installations.
-Environment modules are used for dynamic modification of a user's environment via modulefiles, and typically installed on HPC clusters.
+Builds [environment modules](http://modules.sourceforge.net/) from source on Debian and Ubuntu installations.
+Environment modules are used for dynamic modification of a user's environment via modulefiles and is typically installed on HPC clusters.
 
 ## Requirements
 
@@ -55,6 +55,7 @@ None.
     - role: jkglasbrenner.environment-modules
   vars:
     workspace: "{{ ansible_env.HOME }}/.local/src"
+    make: "make -j4"
     modules_use_own_directory: ".local/Modules"
     modules_example_modulefiles_to_remove:
       - dot
