@@ -52,12 +52,4 @@
     state: absent
   with_items:
     "{{ modules_example_modulefiles_to_remove }}"
-
-- name: Source initialization files
-  shell: |
-    source "{{ modules_install_path }}/init/profile.sh"
-    source "/etc/bash.bashrc"
-  args:
-    executable: /bin/bash
-  when: (modules_installed_version.rc != 0) or modules_reinstall_from_source
 ...
