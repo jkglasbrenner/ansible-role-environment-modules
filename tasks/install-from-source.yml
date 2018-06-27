@@ -28,7 +28,7 @@
   check_mode: false
   register: modules_installed_version
 
-- msg: 'Environment Modules installed, version {{ modules_installed_version.stderr | regex_replace("^.*?([0-9\.]+).*?$", "\\1") }}'
+- msg: "Environment Modules installed, version {{ modules_installed_version.stderr | regex_replace('^.*?([0-9\.]+).*?$', '\\1') }}"
   when: modules_installed_version.rc == 0
 
 - msg: "Environment Modules not installed"
