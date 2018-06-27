@@ -29,7 +29,7 @@
   register: modules_installed_version
 
 - debug:
-    msg: "Environment Modules installed, version {{ modules_installed_version.stderr | regex_replace('^.*?([0-9\.]+).*?$', '\\1') }}"
+    msg: "Environment Modules installed, version {{ modules_installed_version.stderr | regex_replace('^.*?([0-9\\.]+).*?$', '\\1') }}"
   when: modules_installed_version.rc == 0
 
 - debug:
