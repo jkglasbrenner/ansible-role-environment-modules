@@ -57,10 +57,7 @@
     dest: "{{ workspace }}/MODULES/"
     creates: "{{ workspace }}/MODULES/modules-{{ modules_version }}/README"
     copy: false
-  register: modules_unarchive
-  failed_when:
-    - (modules_installed_version.rc != 0) or modules_reinstall_from_source
-    - (modules_unarchive.rc != 0)
+  when: (modules_installed_version.rc != 0) or modules_reinstall_from_source
 
 - name: Configure compilation settings for Modules
   shell: ./configure --prefix={{ modules_install_path | quote }} --modulefilesdir={{ modules_modulefiles_path | quote }}
@@ -68,6 +65,7 @@
     chdir: "{{ workspace }}/MODULES/modules-{{ modules_version }}"
     creates: "{{ workspace }}/MODULES/modules-{{ modules_version }}/site.exp"
   register: modules_configure_source
+  when: (modules_installed_version.rc != 0) or modules_reinstall_from_source
   failed_when:
     - (modules_installed_version.rc != 0) or modules_reinstall_from_source
     - (modules_configure_source.rc != 0)
