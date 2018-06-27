@@ -1,0 +1,32 @@
+---
+services: docker
+
+env:
+  - distro: ubuntu1804
+  - distro: ubuntu1604
+  - distro: ubuntu1404
+  - distro: ubuntu1204
+  - distro: debian9
+  - distro: debian8
+# - distro: centos7
+# - distro: centos6
+# - distro: fedora27
+
+script:
+  # Configure test script so we can run extra tests after playbook is run.
+  - export container_id=$(date +%s)
+  - export cleanup=false
+
+  # Download test shim.
+  - wget -O ${PWD}/tests/test.sh https://gist.githubusercontent.com/geerlingguy/73ef1e5ee45d8694570f334be385e181/raw/
+  - chmod +x ${PWD}/tests/test.sh
+
+  # Run tests.
+  - ${PWD}/tests/test.sh
+
+  # Ensure Environment Modules is installed.
+  - 'docker exec --tty ${container_id} env TERM=xterm source /etc/bash.bashrc'
+  - 'docker exec --tty ${container_id} env TERM=xterm module --version'
+
+notifications:
+  webhooks: https://galaxy.ansible.com/api/v1/notifications/
