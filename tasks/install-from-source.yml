@@ -28,12 +28,13 @@
   check_mode: false
   register: modules_installed_version
 
-- msg: "Environment Modules installed, version {{ modules_installed_version.stderr | regex_replace('^.*?([0-9\.]+).*?$', '\\1') }}"
+- debug:
+    msg: "Environment Modules installed, version {{ modules_installed_version.stderr | regex_replace('^.*?([0-9\.]+).*?$', '\\1') }}"
   when: modules_installed_version.rc == 0
 
-- msg: "Environment Modules not installed"
+- debug:
+    msg: "Environment Modules not installed"
   when: modules_installed_version.rc != 0
-
 
 - name: Force Environment Modules install if the version numbers do not match
   set_fact:
