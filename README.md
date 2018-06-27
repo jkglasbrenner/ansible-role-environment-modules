@@ -39,6 +39,7 @@ modules_install_from_source_dependencies:
   - coreutils
   - dejagnu
   - grep
+  - less
   - sed
   - tcl-dev
 ```
