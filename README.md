@@ -12,7 +12,6 @@ None.
 Variables and default values:
 
 ```yaml
-# To use more CPUs during 
 make_cmd: make
 workspace: "{{ ansible_env.HOME }}/src"
 modules_src_sha256: d1f54f639d1946aa1d7ae8ae03752f8ac464a879c14bc35e63b6a87b8a0b7522
