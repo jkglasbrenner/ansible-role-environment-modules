@@ -2,7 +2,13 @@
 
 [![Build Status](https://travis-ci.org/jkglasbrenner/ansible-role-environment-modules.svg?branch=master)](https://travis-ci.org/jkglasbrenner/ansible-role-environment-modules)
 
-Compiles and installs [environment modules](http://modules.sourceforge.net/) from source on Debian-based and RedHat-based Linux distributions. Environment modules are used for dynamic modification of a user's environment via modulefiles and is typically installed on HPC clusters.
+Compiles and installs [environment modules](http://modules.sourceforge.net/) from source on Debian-based and RedHat-based Linux distributions. Environment modules are used for dynamic modification of a user's environment via modulefiles.
+
+Install this role using `ansible-galaxy`:
+
+```bash
+ansible-galaxy install jkglasbrenner.environment_modules
+```
 
 ## Requirements
 
