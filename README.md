@@ -54,7 +54,7 @@ None.
 ```yaml
 - hosts: localhost
   roles:
-    - role: jkglasbrenner.environment-modules
+    - role: jkglasbrenner.environment_modules
   vars:
     workspace: "{{ ansible_env.HOME }}/.local/src"
     make: "make -j4"
