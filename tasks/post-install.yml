@@ -17,14 +17,14 @@
 
 - name: Add line to /etc/bash.bashrc to source Modules
   become: true
-  lineinfile:
+  blockinfile:
     path: /etc/bash.bashrc
     state: present
-    insertafter: EOF
-    line: |
+    block: |
       # Initialize Modules
       . {{ modules_install_path }}/init/bash
-  when: (modules_installed_version.rc != 0) or modules_reinstall_from_source
+  when:
+    - ansible_os_family == 'Debian'
 
 - name: Configure modulerc file
   become: true

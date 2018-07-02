@@ -2,6 +2,7 @@
 dependencies: []
 
 galaxy_info:
+  role_name: environment_modules
   author: jkglasbrenner
   description: Environment modules for dynamic modification of a user's environment via modulefiles.
   license: MIT
@@ -9,7 +10,14 @@ galaxy_info:
   platforms:
     - name: Ubuntu
       versions:
-        - 18.04
+        - bionic
+        - xenial
+        - trusty
+        - precise
+    - name: Debian
+      versions:
+        - stretch
+        - jessie
   galaxy_tags:
     - modules
     - hpc
