@@ -1,0 +1,14 @@
+---
+modules_package_dependencies:
+  - "@Development tools"
+  - autoconf
+  - automake
+  - bash
+  - dejagnu
+  - gettext
+  - grep
+  - less
+  - procps
+  - sed
+  - tcl-devel
+...

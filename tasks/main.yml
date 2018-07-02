@@ -1,38 +1,23 @@
 ---
 - name: include os-specific variables
   include_vars: "{{ ansible_os_family }}.yml"
-  when: ansible_os_family == "Debian" or ansible_os_family == "RedHat"
+  when: ansible_os_family == "Debian" or (ansible_os_family == "RedHat" and not (ansible_distribution == "CentOS" and ansible_distribution_version is version_compare('6.0', operator='>=') and ansible_distribution_version is version_compare('7.0', operator='<')))
   failed_when:
     - ansible_os_family != "Debian"
     - ansible_os_family != "RedHat"
 
-- name: install package dependencies for environment modules installation (apt)
-  become: true
-  apt:
-    name: "{{ modules_package_dependencies }}"
-    update_cache: yes
-    state: present
-    cache_valid_time: 86400
-  when: ansible_os_family == 'Debian'
-
-- name: install package dependencies for environment modules installation (yum)
-  become: true
-  yum:
-    name: "{{ modules_package_dependencies }}"
-    update_cache: yes
-    state: present
+- name: include CentOS 6-specific variables
+  include_vars: "{{ ansible_distribution }}_6.yml"
   when:
-    - ansible_os_family == "RedHat"
-    - ansible_distribution != "Fedora"
+    - ansible_distribution == "CentOS"
+    - ansible_distribution_version is version_compare('6.0', operator='>=')
+    - ansible_distribution_version is version_compare('7.0', operator='<')
 
-- name: install package dependencies for environment modules installation (dnf)
+- name: install package dependencies for environment modules installation
   become: true
-  dnf:
+  package:
     name: "{{ modules_package_dependencies }}"
     state: present
-  when:
-    - ansible_distribution == "Fedora"
-    - ansible_distribution_version is version_compare(21, operator=">")
 
 - name: check for installation of environment modules
   shell: bash -lc "module --version"
