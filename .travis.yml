@@ -24,10 +24,6 @@ script:
   # Run tests.
   - ${PWD}/tests/test.sh
 
-  # Ensure Environment Modules is installed.
-  - 'docker exec --tty ${container_id} env TERM=xterm source /etc/bash.bashrc'
-  - 'docker exec --tty ${container_id} env TERM=xterm module --version'
-
 notifications:
   webhooks: https://galaxy.ansible.com/api/v1/notifications/
 ...
