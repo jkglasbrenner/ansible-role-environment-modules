@@ -3,5 +3,5 @@
 # and modulefiles you want to load by default for all users. It should
 # contains a lines of module command like 'module use path' and
 # 'module load mod'
-module use --append {{ "{" }}{{ modules_modulefiles_path }}{{ "}" }}
+module use --append {{ "{" }}{{ modules_modulefiles_dir }}{{ "}" }}
 module load use.own

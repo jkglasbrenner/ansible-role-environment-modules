@@ -1,14 +1,138 @@
 ---
-- name: Update apt cache
+- name: include os-specific variables
+  include_vars: "{{ ansible_os_family }}.yml"
+  when: ansible_os_family == "Debian" or ansible_os_family == "RedHat"
+  failed_when:
+    - ansible_os_family != "Debian"
+    - ansible_os_family != "RedHat"
+
+- name: install package dependencies for environment modules installation (apt)
   become: true
   apt:
-    update_cache: true
+    name: "{{ modules_package_dependencies }}"
+    update_cache: yes
+    state: present
     cache_valid_time: 86400
   when: ansible_os_family == 'Debian'
 
-- import_tasks: install-from-source.yml
-  when: modules_install_from_source == true
+- name: install package dependencies for environment modules installation (yum)
+  become: true
+  yum:
+    name: "{{ modules_package_dependencies }}"
+    update_cache: yes
+    state: present
+  when:
+    - ansible_os_family == "RedHat"
+    - ansible_distribution != "Fedora"
 
-- import_tasks: post-install.yml
-  when: modules_install_from_source == true
+- name: install package dependencies for environment modules installation (dnf)
+  become: true
+  dnf:
+    name: "{{ modules_package_dependencies }}"
+    state: present
+  when:
+    - ansible_distribution == "Fedora"
+    - ansible_distribution_version is version_compare(21, operator=">")
+
+- name: check for installation of environment modules
+  shell: bash -lc "module --version"
+  changed_when: false
+  failed_when: false
+  register: modules_installed_version
+
+- name: compile and install environment modules
+  when: "(modules_installed_version.rc != 0) or ((modules_installed_version.rc == 0) and (modules_installed_version.stderr | regex_replace(\"^.*?([0-9\\.]+).*?$\", \"\\1\") is version_compare(modules_version, operator='<')))"
+  block:
+    - name: download environment modules source
+      get_url:
+        url: "{{ modules_src_url }}"
+        checksum: "{{ modules_checksum }}"
+        dest: "/tmp/{{ modules_src_tar_gz }}"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: 0644
+        timeout: "{{ modules_timeout_seconds }}"
+
+    - name: unarchive environment modules source
+      unarchive:
+        src: "/tmp/{{ modules_src_tar_gz }}"
+        dest: "/tmp/"
+        creates: "/tmp/{{ modules_name }}/README"
+        copy: false
+
+    - name: configure
+      shell: bash -lc "./configure --prefix={{ modules_dir | quote }} --modulefilesdir={{ modules_modulefiles_dir | quote }}"
+      args:
+        chdir: "/tmp/{{ modules_name }}"
+        creates: "/tmp/{{ modules_name }}/site.exp"
+
+    - name: make
+      make:
+        chdir: "/tmp/{{ modules_name }}"
+        params:
+          MAKE: "{{ modules_make_cmd }}"
+
+    - name: make install
+      become: true
+      make:
+        chdir: "/tmp/{{ modules_name }}"
+        target: install
+
+- name: delete environment modules source
+  file:
+    path: "/tmp/{{ item }}"
+    state: absent
+  with_items:
+    - "{{ modules_src_tar_gz }}"
+    - "{{ modules_name }}/"
+
+- name: link /etc/profile.d/modules.sh
+  become: true
+  file:
+    src: "{{ modules_init_profile }}.sh"
+    dest: "{{ modules_etc_profile }}/modules.sh"
+    state: link
+
+- name: link /etc/profile.d/modules.csh
+  become: true
+  file:
+    src: "{{ modules_init_profile }}.csh"
+    dest: "{{ modules_etc_profile }}/modules.csh"
+    state: link
+
+- name: source bash init script in /etc/bash.bashrc (Debian-based distros)
+  become: true
+  blockinfile:
+    path: "/etc/bash.bashrc"
+    state: present
+    block: |
+      # Initialize environment modules
+      . {{ modules_init_bash }}
+  when: ansible_os_family == 'Debian'
+
+- name: configure settings in modulerc
+  become: true
+  template:
+    src: "modulerc.j2"
+    dest: "{{ modules_init_modulerc }}"
+    mode: 0644
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+
+- name: configure local path in use.own module
+  become: true
+  template:
+    src: "use.own.j2"
+    dest: "{{ modules_init_use_own }}"
+    mode: 0644
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+
+- name: remove example modulefiles
+  become: true
+  file:
+    path: "{{ modules_modulefiles_dir }}/{{ item }}"
+    state: absent
+  with_items:
+    "{{ modules_example_modulefiles_to_remove }}"
 ...

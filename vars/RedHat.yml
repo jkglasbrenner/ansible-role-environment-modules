@@ -1,14 +1,13 @@
 ---
 modules_package_dependencies:
+  - "@Development tools"
   - autoconf
   - automake
-  - autopoint
   - bash
-  - build-essential
-  - coreutils
   - dejagnu
+  - gettext
   - grep
   - less
   - sed
-  - tcl-dev
+  - tcl-devel
 ...

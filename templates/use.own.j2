@@ -3,7 +3,7 @@
 ## use.own modulefile
 ##
 proc ModulesHelp { } {
-    puts stderr "\tThis module file will add \$HOME/{{ modules_use_own_directory }} to the"
+    puts stderr "\tThis module file will add \$HOME/{{ modules_use_own_dir }} to the"
     puts stderr "\tlist of directories that the module command will search"
     puts stderr "\tfor modules.  Place your own module files here."
     puts stderr "\tThis module, when loaded, will create this directory"
@@ -13,7 +13,7 @@ proc ModulesHelp { } {
 module-whatis   "adds your own modulefiles directory to MODULEPATH"
 
 eval set  [ array get env HOME ]
-set ownmoddir   $HOME/{{ modules_use_own_directory }}
+set ownmoddir   $HOME/{{ modules_use_own_dir }}
 
 # create directory if necessary
 if [ module-info mode load ] {
