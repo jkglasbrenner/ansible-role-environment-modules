@@ -2,8 +2,7 @@
 
 [![Build Status](https://travis-ci.org/jkglasbrenner/ansible-role-environment-modules.svg?branch=master)](https://travis-ci.org/jkglasbrenner/ansible-role-environment-modules)
 
-Compiles and installs [environment modules](http://modules.sourceforge.net/) from source.
-Environment modules are used for dynamic modification of a user's environment via modulefiles and is typically installed on HPC clusters.
+Compiles and installs [environment modules](http://modules.sourceforge.net/) from source on Debian-based and RedHat-based Linux distributions. Environment modules are used for dynamic modification of a user's environment via modulefiles and is typically installed on HPC clusters.
 
 ## Requirements
 
@@ -73,7 +72,7 @@ modules_package_dependencies:
   - sed
   - tcl-dev
 
-# RedHat-based distros
+# RedHat-based distros: CentOS 7 and Fedora
 modules_package_dependencies:
   - "@Development tools"
   - autoconf
@@ -83,6 +82,21 @@ modules_package_dependencies:
   - gettext
   - grep
   - less
+  - procps-ng
+  - sed
+  - tcl-devel
+
+# RedHat-based distros: Centos 6
+modules_package_dependencies:
+  - "@Development tools"
+  - autoconf
+  - automake
+  - bash
+  - dejagnu
+  - gettext
+  - grep
+  - less
+  - procps
   - sed
   - tcl-devel
 ```
