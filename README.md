@@ -59,8 +59,8 @@ modules_example_modulefiles_to_remove: []
 Distribution-specific variables:
 
 ```yaml
-# Debian/Ubuntu
-modules_install_from_source_dependencies:
+# Debian-based distros
+modules_package_dependencies:
   - autoconf
   - automake
   - autopoint
@@ -72,6 +72,19 @@ modules_install_from_source_dependencies:
   - less
   - sed
   - tcl-dev
+
+# RedHat-based distros
+modules_package_dependencies:
+  - "@Development tools"
+  - autoconf
+  - automake
+  - bash
+  - dejagnu
+  - gettext
+  - grep
+  - less
+  - sed
+  - tcl-devel
 ```
 
 ## Dependencies
