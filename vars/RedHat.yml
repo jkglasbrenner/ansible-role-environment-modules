@@ -8,6 +8,7 @@ modules_package_dependencies:
   - gettext
   - grep
   - less
+  - procps-ng
   - sed
   - tcl-devel
 ...
