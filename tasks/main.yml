@@ -93,6 +93,7 @@
     block: |
       # Initialize environment modules
       . {{ modules_init_bash }}
+    marker: '# {mark} ANSIBLE MANAGED BLOCK jkglasbrenner.environment_modules'
   when: ansible_os_family == 'Debian'
 
 - name: configure settings in modulerc
