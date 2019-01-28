@@ -3,12 +3,15 @@
 modules_mirror: "https://github.com/cea-hpc/modules/releases/download"
 
 # modules version
-modules_version: 4.1.3
+modules_version: 4.2.1
 
 # modules checksums
 modules_checksums:
   modules-4.1.2.tar.gz: "sha256:d1f54f639d1946aa1d7ae8ae03752f8ac464a879c14bc35e63b6a87b8a0b7522"
   modules-4.1.3.tar.gz: "sha256:dab82c5bc20ccea284b042d6af4bd6eaba95f4eaadd495a75413115d33a3151f"
+  modules-4.1.4.tar.gz: "sha256:c796ea6a03e22d63886ca9ec6b1bef821e8cb09f186bd007f63653e31e9cb595"
+  modules-4.2.0.tar.gz: "sha256:d439dfa579a633108c4f06574ed9bc3b91b8610d2ce3a6eb803bf377d0284be7"
+  modules-4.2.1.tar.gz: "sha256:c796ea6a03e22d63886ca9ec6b1bef821e8cb09f186bd007f63653e31e9cb595"
 
 # modules source code info
 modules_name: "modules-{{ modules_version }}"
